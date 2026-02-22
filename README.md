@@ -6,30 +6,13 @@
 
 Local-first token usage dashboard.
 
-## Development (recommended)
-
-Toucan is intentionally minimal — it's designed to be forked and built on. Add new models, tweak pricing, change the UI, add new tools.
+## Quickstart
 
 ```bash
 git clone https://github.com/dionysuzx/toucan.git
 cd toucan
 bun install
-bun run dev
+bun dev
 ```
 
-`bun run dev` starts the TUI with live reload — edit toucan with your favorite LLM and it restarts automatically.
-
-## Install
-
-```bash
-git clone https://github.com/dionysuzx/toucan.git
-cd toucan
-bun install
-bun link
-```
-
-After `bun link`, the `toucan` command is available globally:
-
-```bash
-toucan
-```
+Toucan is intentionally minimal. `bun dev` starts the TUI with live reload — edit toucan with your favorite LLM and it restarts automatically.
