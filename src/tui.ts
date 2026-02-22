@@ -126,7 +126,7 @@ function renderTabs(active: View, width: number): string {
 function renderHeader(active: View, width: number): string[] {
   const lines: string[] = [];
   lines.push("");
-  lines.push(`  ${c.bold}${c.brightCyan}toucan${c.reset}${c.dim}  ·  AI token usage dashboard${c.reset}`);
+  lines.push(`  ${c.bold}${c.brightCyan}toucan${c.reset}${c.dim}  ·  Local-first token usage dashboard${c.reset}`);
   lines.push("");
   lines.push(renderTabs(active, width));
   lines.push(hrule(width - 2));

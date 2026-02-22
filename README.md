@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="toucan.jpeg" width="600" />
-</p>
-
 # toucan
 
 Local-first token usage dashboard.
