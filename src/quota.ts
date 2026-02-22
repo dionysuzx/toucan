@@ -183,21 +183,41 @@ async function findLatestCodexSession(base: string): Promise<string | null> {
 // Uses Google OAuth token from ~/.gemini/oauth_creds.json
 // Calls retrieveUserQuota endpoint
 
-// Public installed-app OAuth credentials from the Gemini CLI source.
-// These identify the app, not the user — same values shipped in Google's
-// open-source Gemini CLI. Override via env vars if needed.
-const GEMINI_CLIENT_ID = process.env.GEMINI_CLIENT_ID
-  ?? "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com";
-const GEMINI_CLIENT_SECRET = process.env.GEMINI_CLIENT_SECRET
-  ?? "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";
+// Read Gemini CLI's public OAuth credentials from its installed package at runtime.
+// These are public installed-app values (not real secrets) but reading them from
+// the user's local Gemini CLI install avoids hardcoding and stays in sync.
+// Override via env vars if needed.
+let _geminiCredsCache: { clientId: string; clientSecret: string } | null = null;
+
+function loadGeminiOAuthCreds(): { clientId: string; clientSecret: string } {
+  if (process.env.GEMINI_CLIENT_ID && process.env.GEMINI_CLIENT_SECRET) {
+    return { clientId: process.env.GEMINI_CLIENT_ID, clientSecret: process.env.GEMINI_CLIENT_SECRET };
+  }
+  if (_geminiCredsCache) return _geminiCredsCache;
+
+  // Find the installed @google/gemini-cli-core package and extract credentials
+  try {
+    const modPath = require.resolve("@google/gemini-cli-core/dist/src/code_assist/oauth2.js");
+    const src = require("node:fs").readFileSync(modPath, "utf8") as string;
+    const idMatch = src.match(/OAUTH_CLIENT_ID\s*=\s*'([^']+)'/);
+    const secretMatch = src.match(/OAUTH_CLIENT_SECRET\s*=\s*'([^']+)'/);
+    if (idMatch && secretMatch) {
+      _geminiCredsCache = { clientId: idMatch[1], clientSecret: secretMatch[1] };
+      return _geminiCredsCache;
+    }
+  } catch {}
+
+  throw new Error("Gemini CLI not found. Install it (npm i -g @google/gemini-cli) or set GEMINI_CLIENT_ID and GEMINI_CLIENT_SECRET env vars.");
+}
 
 async function refreshGeminiToken(creds: any): Promise<string> {
+  const { clientId, clientSecret } = loadGeminiOAuthCreds();
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: GEMINI_CLIENT_ID,
-      client_secret: GEMINI_CLIENT_SECRET,
+      client_id: clientId,
+      client_secret: clientSecret,
       grant_type: "refresh_token",
       refresh_token: creds.refresh_token,
     }),
