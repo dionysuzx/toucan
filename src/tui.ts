@@ -106,7 +106,7 @@ const VIEWS: View[] = ["daily", "usage", "overview", "models", "stats"];
 const VIEW_LABELS: Record<View, string> = {
   overview: "Overview",
   models: "Models",
-  daily: "Daily",
+  daily: "Spend",
   stats: "Stats",
   usage: "Usage",
 };
