@@ -1,5 +1,9 @@
 # toucan
 
+<p align="center">
+  <img src="toucan.jpeg" width="200" alt="toucan" />
+</p>
+
 Local-first token usage dashboard.
 
 ## Development (recommended)
